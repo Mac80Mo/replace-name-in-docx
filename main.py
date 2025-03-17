@@ -2,7 +2,7 @@ import os
 from docx import Document
 
 def replace_name_in_docx(input_file, output_file, old_name, new_name):
-    # Öffne das Word-Dokument
+    """ Öffnet ein Word-Dokument, ersetzt den Namen und speichert die bearbeitete Datei """
     doc = Document(input_file)
     
     # Durchlaufe alle Absätze und ersetze den Namen
@@ -10,7 +10,7 @@ def replace_name_in_docx(input_file, output_file, old_name, new_name):
         if old_name in para.text:
             para.text = para.text.replace(old_name, new_name)
     
-    # Durchlaufe alle Tabelle (falls der Name in Tabellen vorkommt)
+    # Durchlaufe alle Tabellen (falls der Name in Tabellen vorkommt)
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -19,27 +19,36 @@ def replace_name_in_docx(input_file, output_file, old_name, new_name):
                     
     # Speichere das bearbeitete Dokument
     doc.save(output_file)
-    print(f"Ersetzung abgeschlossen! Neue Datei gespeichert als: {output_file}")
+    print(f"Bearbeitet gespeichert als: {output_file}")
 
-def process_multiple_files(directory, old_name, new_name):
-    # Durchläuft alle .docs-Dateien in einem Ordner und ersetzt den Namen
-    if not os.path.exists(directory):
-        print(f"Ordner {directory} existiert nicht.")
+def process_multiple_files(source_dir, destination_dir, old_name, new_name, filename_suffix=""):
+    """ Durchläuft alle .docx-Dateien im Quellordner und speichert sie mit optionalem Zusatz im Dateinamen """
+    
+    if not os.path.exists(source_dir):
+        print(f"Ordner {source_dir} existiert nicht.")
         return
     
-    # Alle .docx-Dateien im Verzeichnis durchsuchen
-    for filename in os.listdir(directory):
+    # Zielordner erstellen, falls er nicht existiert
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+
+    for filename in os.listdir(source_dir):
         if filename.endswith(".docx"):
-            input_file = os.path.join(directory, filename)
-            output_file = os.path.join(directory, f"bearbeitet_{filename}") # Neuer Name -> Gib was sinnvolleres ein ggf.
+            input_file = os.path.join(source_dir, filename)
+
+            # **Erhalte den Original-Dateinamen und füge den Zusatz an**
+            name_part, ext = os.path.splitext(filename)
+            new_filename = f"{name_part}_{filename_suffix}{ext}" if filename_suffix else filename  # Falls kein Zusatz, bleibt Originalname
             
+            output_file = os.path.join(destination_dir, new_filename)
+
             replace_name_in_docx(input_file, output_file, old_name, new_name)
 
-# Aufruf:
-#input_file = "original_bericht.docx"        # Bei einzelaufrufen
-#output_file = "geänderter_bericht.docx"     # Bei einzelaufrufen   
-directory = "berichte"          # Name des Ordners mit den Word-Dokumenten
-old_name = "Max Mustermann"
-new_name = "Mein Name"
+# Ordnerstruktur gemäß deinem Bild
+source_dir = "./Source"  # Quellordner mit Originaldateien
+destination_dir = "./Destination"  # Zielordner für bearbeitete Dateien
+old_name = "Max Mustermann"  # Name, der ersetzt werden soll
+new_name = "Dein Name"  # Neuer Name
+filename_suffix = ""  # **Hier den gewünschten Zusatz eingeben, kann auch leer sein ("")**
 
-process_multiple_files(directory, old_name, new_name)
+process_multiple_files(source_dir, destination_dir, old_name, new_name, filename_suffix)
