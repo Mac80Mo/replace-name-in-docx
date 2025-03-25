@@ -48,7 +48,7 @@ def process_multiple_files(source_dir, destination_dir, old_name, new_name, file
 source_dir = "./Source"  # Quellordner mit Originaldateien
 destination_dir = "./Destination"  # Zielordner für bearbeitete Dateien
 old_name = "Max Mustermann"  # Name, der ersetzt werden soll
-new_name = "Dein Name"  # Neuer Name
+new_name = "Neuer Name"  # Neuer Name
 filename_suffix = ""  # **Hier den gewünschten Zusatz eingeben, kann auch leer sein ("")**
 
 process_multiple_files(source_dir, destination_dir, old_name, new_name, filename_suffix)
